@@ -15,4 +15,6 @@ public class RestErrorHandler implements ResponseErrorHandler {
     public void handleError(ClientHttpResponse response) throws IOException {
 
     }
+
+
 }
