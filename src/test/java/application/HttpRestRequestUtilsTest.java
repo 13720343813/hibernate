@@ -8,17 +8,25 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.IntStream.range;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class HttpRestRequestUtilsTest {
 
     static List<User> users = new ArrayList<>();
+
+    static List<String> idList = new ArrayList<>();
+
+    static {
+        idList.add("100");
+        idList.add("200");
+        idList.add("300");
+    }
 
     static {
         users.add(new User("张三", 11, "zhangsan@qq.com"));
@@ -37,6 +45,24 @@ public class HttpRestRequestUtilsTest {
             String response = httpRestRequestUtils.doPost(url, query);
             pageIndex++;
         }
+    }
+
+    @Test
+    public void testDate(){
+        System.out.println(formatDate("2020/04/01 00:00:00"));
+    }
+
+    private String formatDate(String dateStr) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd 00:00:00");
+        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateTime = null;
+        String date = null;
+        try {
+            dateTime = df.parse(dateStr);
+            date = df2.format(dateTime);
+        } catch (Exception e) {
+        }
+        return date;
     }
 
     @Test
@@ -98,5 +124,19 @@ public class HttpRestRequestUtilsTest {
                 .filter(entry -> entry.getValue() > 1).map(entry -> entry.getKey()).collect(Collectors.toList());
         System.out.println(nameList.size());
 
+    }
+
+    @Test
+    public void testStream(){
+        System.out.println(users.stream().mapToInt(u -> u.getAge()).sum());
+        //String转为Int
+        List<Integer> ids = idList.stream().mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+        ids.stream().forEach(System.out::println);
+
+        System.out.println("=========================================");
+
+        String idStr = "";
+        Optional.of(idStr).filter(s -> StringUtils.isNotEmpty(s)).isPresent();
+        Arrays.stream(idStr.split(",")).filter(s -> StringUtils.isNotEmpty(s)).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList()).forEach(System.out::println);
     }
 }
